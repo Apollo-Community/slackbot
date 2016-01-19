@@ -2,6 +2,9 @@ package slackbot
 
 import (
 	"fmt"
+	"html"
+	"io/ioutil"
+	"net/http"
 	"net/url"
 	"strings"
 	"time"
@@ -30,6 +33,7 @@ func init() {
 		&Command{"mute", "Mute my messages to this channel, for a while.", cmd_mute},
 		&Command{"roll", "Throw a dice roll.", cmd_roll},
 		&Command{"wiki", "Quote a page from our SS13 wiki.", cmd_wiki},
+		&Command{"pun", "Tell a random pun.", cmd_pun},
 	}
 }
 
@@ -168,5 +172,24 @@ func cmd_wiki(i *Instance, m *Message, args string) error {
 	}
 
 	i.ChannelMsg(m.Channel, fmt.Sprintf(">>>%s\n`Source: %s`", text, u))
+	return nil
+}
+
+func cmd_pun(i *Instance, m *Message, args string) error {
+	resp, e := http.Get("http://www.punoftheday.com/cgi-bin/arandompun.pl")
+	if e != nil {
+		return fmt.Errorf("Sorry, couldn't make up a pun for you.")
+	}
+	defer resp.Body.Close()
+	body, e := ioutil.ReadAll(resp.Body)
+	if e != nil {
+		return fmt.Errorf("Sorry, couldn't make up a pun for you.")
+	}
+	// Yep this is a fucking mess.
+	s := strings.TrimSpace(string(body))
+	s = strings.TrimPrefix(s, "document.write('&quot;")
+	index := strings.Index(s, "&quot;")
+	s = html.UnescapeString(s[:index])
+	i.ChannelMsg(m.Channel, fmt.Sprintf(">>>%v\n`© 1996-2011 PunoftheDay.com`", s))
 	return nil
 }
