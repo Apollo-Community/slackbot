@@ -2,8 +2,11 @@ package slackbot
 
 import (
 	"fmt"
+	"net/url"
+	"strings"
 	"time"
 
+	"github.com/PuerkitoBio/goquery"
 	"github.com/justinian/dice"
 )
 
@@ -26,6 +29,7 @@ func init() {
 		&Command{"vote", "start/stop a vote or vote yes/no during a vote.", cmd_vote},
 		&Command{"mute", "Mute my messages to this channel, for a while.", cmd_mute},
 		&Command{"roll", "Throw a dice roll.", cmd_roll},
+		&Command{"wiki", "Quote a page from our SS13 wiki.", cmd_wiki},
 	}
 }
 
@@ -147,5 +151,22 @@ func cmd_roll(i *Instance, m *Message, args string) error {
 		return fmt.Errorf("Bad dice format.")
 	}
 	i.ChannelMsg(m.Channel, fmt.Sprintf("@%s has rolled: %v, %v\n", i.Users[m.User].Name, ret, res))
+	return nil
+}
+
+func cmd_wiki(i *Instance, m *Message, args string) error {
+	u := WIKI_URL + url.QueryEscape(args)
+	doc, e := goquery.NewDocument(u)
+	if e != nil {
+		return fmt.Errorf("Couldn't open the wiki for you (%v).", u)
+	}
+
+	node := doc.Find("div #mw-content-text > p").First()
+	text := strings.TrimSpace(node.Text())
+	if node.Length() < 1 || len(text) < 1 {
+		return fmt.Errorf("Couldn't quote that page for you (%v).", u)
+	}
+
+	i.ChannelMsg(m.Channel, fmt.Sprintf(">>>%s\n`Source: %s`", text, u))
 	return nil
 }
