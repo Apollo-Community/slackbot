@@ -152,6 +152,11 @@ type Message struct {
 }
 
 func (i *Instance) HandleMsg(msg *slack.MessageEvent) {
+	if msg.User == i.BotId {
+		// Sometimes we get a message from ourselves..
+		return
+	}
+
 	sec, e := strconv.ParseInt(strings.Split(msg.Timestamp, ".")[0], 10, 64)
 	if e != nil {
 	}
