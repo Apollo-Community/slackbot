@@ -2,6 +2,7 @@ package slackbot
 
 import (
 	"fmt"
+	"log"
 	"strconv"
 	"strings"
 	"time"
@@ -183,13 +184,6 @@ func (i *Instance) HandleMsg(msg *slack.MessageEvent) {
 }
 
 func (i *Instance) parse_msg(m *Message) {
-	fmt.Printf("%s #%s @%s: %s\n",
-		m.Timestamp.Format("2006-01-02 15:04 MST"),
-		i.Channels[m.Channel].Name,
-		i.Users[m.User].Name,
-		m.Message,
-	)
-
 	if m.ForBot {
 		e := i.parse_cmd(m)
 		if e != nil {
@@ -212,5 +206,7 @@ func (i *Instance) parse_cmd(m *Message) error {
 		}
 	}
 
-	return fmt.Errorf("Unknown command.")
+	// TODO: for now log the unknown command on STDOUT
+	log.Printf("%v: %v\n", i.Users[m.User].Name, m.Message)
+	return fmt.Errorf("Sorry I don't know how to do that yet, but I'll try to learn it.")
 }
