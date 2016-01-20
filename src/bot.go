@@ -13,17 +13,19 @@ import (
 type Instance struct {
 	Users    map[string]slack.User // TODO: not thread safe
 	Channels map[string]slack.Channel
+	Groups   map[string]slack.Group
 	Latency  time.Duration
 	Debug    bool
 	BotId    string
 
-	slack   *slack.Client
-	rtm     *slack.RTM
-	running bool
-	modes   map[string]bool
-	scores  map[string]map[string]int
-	polls   map[string]int
-	mutes   map[string]time.Time
+	slack        *slack.Client
+	rtm          *slack.RTM
+	running      bool
+	modes        map[string]bool
+	scores       map[string]map[string]int
+	polls        map[string]int
+	mutes        map[string]time.Time
+	forum_topics []*ForumTopic
 }
 
 func NewInstance(debug bool, botid string) *Instance {
@@ -33,6 +35,7 @@ func NewInstance(debug bool, botid string) *Instance {
 	i := &Instance{
 		Users:    make(map[string]slack.User),
 		Channels: make(map[string]slack.Channel),
+		Groups:   make(map[string]slack.Group),
 		Debug:    debug,
 		BotId:    botid,
 		slack:    s,
@@ -63,6 +66,10 @@ func (i *Instance) Run() {
 				for _, c := range ev.Info.Channels {
 					i.Channels[c.ID] = c
 				}
+				for _, g := range ev.Info.Groups {
+					i.Groups[g.ID] = g
+				}
+				go i.announce_latest_forum_topics()
 
 			case *slack.MessageEvent:
 				i.HandleMsg(ev)
