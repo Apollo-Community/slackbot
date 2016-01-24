@@ -1,6 +1,7 @@
 package slackbot
 
 import (
+	"encoding/json"
 	"fmt"
 	"html"
 	"io/ioutil"
@@ -34,6 +35,8 @@ func init() {
 		&Command{"roll", "Throw a dice roll.", cmd_roll},
 		&Command{"wiki", "Quote a page from our SS13 wiki.", cmd_wiki},
 		&Command{"pun", "Tell a random pun.", cmd_pun},
+		&Command{"badpun", "Tell a random, bad pun.", cmd_pun},
+		&Command{"catfact", "Tell a random cat fact.", cmd_catfact},
 	}
 }
 
@@ -192,4 +195,29 @@ func cmd_pun(i *Instance, m *Message, args string) error {
 	s = html.UnescapeString(s[:index])
 	i.ChannelMsg(m.Channel, fmt.Sprintf(">>>%v\n`© 1996-2011 PunoftheDay.com`", s))
 	return nil
+}
+
+type CatFacts struct {
+	Facts   []string
+	Success string
+}
+
+func cmd_catfact(i *Instance, m *Message, args string) error {
+	resp, e := http.Get("http://catfacts-api.appspot.com/api/facts?number=1")
+	if e != nil {
+		return fmt.Errorf("Sorry, couldn't find any cat facts.")
+	}
+	defer resp.Body.Close()
+	decoder := json.NewDecoder(resp.Body)
+	var cf CatFacts
+	e = decoder.Decode(&cf)
+	if e != nil {
+		return fmt.Errorf("Sorry, couldn't find any cat facts.")
+	}
+	if len(cf.Facts) > 0 {
+		msg := fmt.Sprintf(">>>%v\n`© http://catfacts-api.appspot.com`", cf.Facts[0])
+		i.ChannelMsg(m.Channel, msg)
+		return nil
+	}
+	return fmt.Errorf("Sorry, couldn't find any cat facts.")
 }
