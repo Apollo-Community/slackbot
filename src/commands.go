@@ -37,6 +37,7 @@ func init() {
 		&Command{"pun", "Tell a random pun.", cmd_pun},
 		&Command{"badpun", "Tell a random, bad pun.", cmd_pun},
 		&Command{"catfact", "Tell a random cat fact.", cmd_catfact},
+		&Command{"catfacts", "Tell a random cat fact.", cmd_catfact},
 	}
 }
 
@@ -202,11 +203,20 @@ type CatFacts struct {
 	Success string
 }
 
+var LAST_CATFACT_TIME time.Time
+
 func cmd_catfact(i *Instance, m *Message, args string) error {
+	now := time.Now()
+	if now.After(LAST_CATFACT_TIME) != true {
+		return fmt.Errorf("Sorry, no more catfacts for today.")
+	}
+	LAST_CATFACT_TIME = now.Add(24 * time.Hour)
+
 	resp, e := http.Get("http://catfacts-api.appspot.com/api/facts?number=1")
 	if e != nil {
 		return fmt.Errorf("Sorry, couldn't find any cat facts.")
 	}
+
 	defer resp.Body.Close()
 	decoder := json.NewDecoder(resp.Body)
 	var cf CatFacts
@@ -214,6 +224,7 @@ func cmd_catfact(i *Instance, m *Message, args string) error {
 	if e != nil {
 		return fmt.Errorf("Sorry, couldn't find any cat facts.")
 	}
+
 	if len(cf.Facts) > 0 {
 		msg := fmt.Sprintf(">>>%v\n`© http://catfacts-api.appspot.com`", cf.Facts[0])
 		i.ChannelMsg(m.Channel, msg)
