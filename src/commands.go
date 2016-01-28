@@ -208,7 +208,7 @@ var LAST_CATFACT_TIME time.Time
 func cmd_catfact(i *Instance, m *Message, args string) error {
 	now := time.Now()
 	if now.After(LAST_CATFACT_TIME) != true {
-		return fmt.Errorf("Sorry, no more catfacts for today.")
+		return fmt.Errorf("Sorry, I can only show a single catfact per day (or else I'll get banned!).")
 	}
 	LAST_CATFACT_TIME = now.Add(24 * time.Hour)
 
