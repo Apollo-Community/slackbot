@@ -140,6 +140,7 @@ func cmd_status(i *Instance, m *Message, args string) error {
 	tmp += fmt.Sprintf("`My User ID: @%v`\n", i.BotId)
 	tmp += fmt.Sprintf("`Tracked channels: %v`\n", len(i.Channels))
 	tmp += fmt.Sprintf("`Tracked users: %v`\n", len(i.Users))
+	tmp += fmt.Sprintf("`No. of Goon quotes: %v`\n", len(i.goon))
 	tmp += fmt.Sprintf("\nI am currently muted on channels:\n")
 	if len(i.mutes) < 1 {
 		tmp += "- `None`\n"
