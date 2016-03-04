@@ -38,6 +38,7 @@ func init() {
 		&Command{"badpun", "Tell a random, bad pun.", cmd_pun},
 		&Command{"catfact", "Tell a random cat fact.", cmd_catfact},
 		&Command{"catfacts", "Tell a random cat fact.", cmd_catfact},
+		&Command{"goon", "Tell a random goon quote.", cmd_goon},
 	}
 }
 
@@ -231,4 +232,11 @@ func cmd_catfact(i *Instance, m *Message, args string) error {
 		return nil
 	}
 	return fmt.Errorf("Sorry, couldn't find any cat facts.")
+}
+
+func cmd_goon(i *Instance, m *Message, args string) error {
+	q := i.random_goon_quote()
+	msg := fmt.Sprintf(">>>%v\n`%v`", q.Quote, q.File)
+	i.ChannelMsg(m.Channel, msg)
+	return nil
 }

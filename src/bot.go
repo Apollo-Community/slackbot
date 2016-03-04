@@ -26,6 +26,7 @@ type Instance struct {
 	polls        map[string]int
 	mutes        map[string]time.Time
 	forum_topics []*ForumTopic
+	goon         []*GoonQuote
 }
 
 func NewInstance(debug bool, botid string) *Instance {
@@ -44,6 +45,12 @@ func NewInstance(debug bool, botid string) *Instance {
 		scores:   make(map[string]map[string]int),
 		polls:    make(map[string]int),
 		mutes:    make(map[string]time.Time),
+	}
+
+	var e error
+	i.goon, e = load_goon_quotes()
+	if e != nil {
+		fmt.Println("Warning: couldn't load goon quotes:", e)
 	}
 
 	return i
