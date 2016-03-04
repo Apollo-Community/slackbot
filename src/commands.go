@@ -38,7 +38,7 @@ func init() {
 		&Command{"badpun", "Tell a random, bad pun.", cmd_pun},
 		&Command{"catfact", "Tell a random cat fact.", cmd_catfact},
 		&Command{"catfacts", "Tell a random cat fact.", cmd_catfact},
-		&Command{"goon", "Tell a random goon quote.", cmd_goon},
+		&Command{"goon", "Tell a random quote from Goon's source code.", cmd_goon},
 	}
 }
 
