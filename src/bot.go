@@ -3,6 +3,7 @@ package slackbot
 import (
 	"fmt"
 	"log"
+	"math/rand"
 	"strconv"
 	"strings"
 	"time"
@@ -26,7 +27,7 @@ type Instance struct {
 	polls        map[string]int
 	mutes        map[string]time.Time
 	forum_topics []*ForumTopic
-	goon         []*GoonQuote
+	goon         []*Quote
 }
 
 func NewInstance(debug bool, botid string) *Instance {
@@ -48,10 +49,13 @@ func NewInstance(debug bool, botid string) *Instance {
 	}
 
 	var e error
-	i.goon, e = load_goon_quotes()
+	i.goon, e = load_quotes(GOON_QUOTES_FILE)
 	if e != nil {
 		fmt.Println("Warning: couldn't load goon quotes:", e)
 	}
+
+	// avoid using the same seed all the time (it defaults to 1)
+	rand.Seed(time.Now().Unix())
 
 	return i
 }
