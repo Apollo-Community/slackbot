@@ -1,6 +1,6 @@
 package slackbot
 
-const VERSION = "0.1"
+const VERSION = "0.2"
 
 const WIKI_URL = "http://wiki.apollo-community.org/index.php?title="
 
