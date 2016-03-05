@@ -39,6 +39,7 @@ func init() {
 		&Command{"catfact", "Tell a random cat fact.", cmd_catfact},
 		&Command{"catfacts", "Tell a random cat fact.", cmd_catfact},
 		&Command{"goon", "Tell a random quote from Goon's source code.", cmd_goon},
+		&Command{"apollo", "Tell a random quote from Apollo's source code.", cmd_apollo},
 	}
 }
 
@@ -141,6 +142,7 @@ func cmd_status(i *Instance, m *Message, args string) error {
 	tmp += fmt.Sprintf("`Tracked channels: %v`\n", len(i.Channels))
 	tmp += fmt.Sprintf("`Tracked users: %v`\n", len(i.Users))
 	tmp += fmt.Sprintf("`No. of Goon quotes: %v`\n", len(i.goon))
+	tmp += fmt.Sprintf("`No. of Apollo quotes: %v`\n", len(i.apollo))
 	tmp += fmt.Sprintf("\nI am currently muted on channels:\n")
 	if len(i.mutes) < 1 {
 		tmp += "- `None`\n"
@@ -237,6 +239,12 @@ func cmd_catfact(i *Instance, m *Message, args string) error {
 
 func cmd_goon(i *Instance, m *Message, args string) error {
 	q := i.random_goon_quote()
+	msg := fmt.Sprintf(">>>%v\n`%v`", q.Quote, q.File)
+	i.ChannelMsg(m.Channel, msg)
+	return nil
+}
+func cmd_apollo(i *Instance, m *Message, args string) error {
+	q := i.random_apollo_quote()
 	msg := fmt.Sprintf(">>>%v\n`%v`", q.Quote, q.File)
 	i.ChannelMsg(m.Channel, msg)
 	return nil

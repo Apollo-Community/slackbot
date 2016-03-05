@@ -28,6 +28,7 @@ type Instance struct {
 	mutes        map[string]time.Time
 	forum_topics []*ForumTopic
 	goon         []*Quote
+	apollo       []*Quote
 }
 
 func NewInstance(debug bool, botid string) *Instance {
@@ -52,6 +53,10 @@ func NewInstance(debug bool, botid string) *Instance {
 	i.goon, e = load_quotes(GOON_QUOTES_FILE)
 	if e != nil {
 		fmt.Println("Warning: couldn't load goon quotes:", e)
+	}
+	i.apollo, e = load_quotes(APOLLO_QUOTES_FILE)
+	if e != nil {
+		fmt.Println("Warning: couldn't load apollo quotes:", e)
 	}
 
 	// avoid using the same seed all the time (it defaults to 1)

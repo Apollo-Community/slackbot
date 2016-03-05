@@ -50,3 +50,8 @@ func (i *Instance) random_goon_quote() *Quote {
 	line := rand.Intn(len(i.goon))
 	return i.goon[line]
 }
+
+func (i *Instance) random_apollo_quote() *Quote {
+	line := rand.Intn(len(i.apollo))
+	return i.apollo[line]
+}
