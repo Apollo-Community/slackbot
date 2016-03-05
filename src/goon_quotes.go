@@ -4,11 +4,8 @@ import (
 	"bufio"
 	"math/rand"
 	"os"
-	"regexp"
 	"strings"
 )
-
-var r_quote = regexp.MustCompile(`([^:]*):.*\/\/(.*)`)
 
 type GoonQuote struct {
 	File  string
@@ -37,22 +34,18 @@ func load_goon_quotes() ([]*GoonQuote, error) {
 
 	return quotes, nil
 }
-
 func parse_goon_quote(line string) *GoonQuote {
-	tmp := r_quote.FindStringSubmatch(line)
-	if tmp == nil || len(tmp) != 3 {
+	tmp := strings.SplitN(line, " ", 2)
+	if len(tmp) != 2 {
 		return nil
 	}
-
-	file := strings.TrimSpace(tmp[1])
-	quote := strings.TrimSpace(tmp[2])
-	if len(file) < 1 || len(quote) < 1 {
-		return nil
-	}
+	quote := strings.TrimSpace(tmp[1])
+	file := strings.TrimSpace(tmp[0])
+	fparts := strings.SplitN(file, "goonstation", 2)
+	file = fparts[1]
 
 	return &GoonQuote{file, quote}
 }
-
 func (i *Instance) random_goon_quote() *GoonQuote {
 	line := rand.Intn(len(i.goon))
 	return i.goon[line]
