@@ -31,8 +31,8 @@ type Instance struct {
 	apollo       []*Quote
 }
 
-func NewInstance(debug bool, botid string) *Instance {
-	s := slack.New(TOKEN)
+func NewInstance(token string, debug bool, botid string) *Instance {
+	s := slack.New(token)
 	s.SetDebug(debug)
 
 	i := &Instance{
