@@ -171,7 +171,6 @@ type Message struct {
 	User      string
 	Channel   string
 	Timestamp time.Time
-	ForBot    bool
 	Message   string
 }
 
@@ -192,7 +191,6 @@ func (i *Instance) HandleMsg(msg *slack.MessageEvent) {
 		User:      msg.User,
 		Channel:   msg.Channel,
 		Timestamp: time.Unix(sec, nsec),
-		ForBot:    false,
 		Message:   msg.Text,
 	}
 
@@ -200,18 +198,14 @@ func (i *Instance) HandleMsg(msg *slack.MessageEvent) {
 	if strings.HasPrefix(m.Message, mention) {
 		m.Message = strings.TrimPrefix(m.Message, mention)
 		m.Message = strings.TrimSpace(strings.TrimPrefix(m.Message, ":"))
-		m.ForBot = true
+		i.parse_msg(m)
 	}
-
-	i.parse_msg(m)
 }
 
 func (i *Instance) parse_msg(m *Message) {
-	if m.ForBot {
-		e := i.parse_cmd(m)
-		if e != nil {
-			i.ChannelMsg(m.Channel, fmt.Sprintf("Error: %s", e))
-		}
+	e := i.parse_cmd(m)
+	if e != nil {
+		i.ChannelMsg(m.Channel, fmt.Sprintf("Error: %s", e))
 	}
 }
 
