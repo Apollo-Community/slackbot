@@ -33,9 +33,7 @@ func init() {
 		&Command{"roll", "Throw a dice roll.", cmd_roll},
 		&Command{"wiki", "Quote a page from our SS13 wiki.", cmd_wiki},
 		&Command{"pun", "Tell a random pun.", cmd_pun},
-		&Command{"badpun", "Tell a random, bad pun.", cmd_pun},
 		&Command{"catfact", "Tell a random cat fact.", cmd_catfact},
-		&Command{"catfacts", "Tell a random cat fact.", cmd_catfact},
 		&Command{"goon", "Tell a random quote from Goon's source code.", cmd_goon},
 		&Command{"apollo", "Tell a random quote from Apollo's source code.", cmd_apollo},
 	}
