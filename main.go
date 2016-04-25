@@ -3,15 +3,16 @@ package main
 import (
 	"flag"
 	"fmt"
+	"os"
 
 	"github.com/Apollo-Community/slackbot/src"
 )
 
-var f_token = flag.String("token", "", "slack bot token")
 var f_debug = flag.Bool("debug", false, "debug mode")
 
 func main() {
 	flag.Parse()
+	token := os.Getenv("SLACKBOT_TOKEN")
 
 	fmt.Println(`
   ▄▄▄▄▄▄▄▄                ▄▄     ▄▄▄▄▄▄                
@@ -21,7 +22,7 @@ func main() {
      ▀████  ▄██▀▀▀███     ██▀██▄ ██    ███    ████    
 █▄▄▄▄▄█▀██▄▄██▄▄▄██▀██▄▄▄▄██  ▀█▄██▄▄▄▄█▀██▄▄██▀██▄▄▄ 
  ▀▀▀▀▀   ▀▀▀▀▀▀▀▀ ▀▀ ▀▀▀▀▀▀▀   ▀▀▀▀▀▀▀▀▀  ▀▀▀▀   ▀▀▀▀ V` + slackbot.VERSION)
-	bot := slackbot.NewInstance(*f_token, *f_debug, "U0JPJSUJU")
+	bot := slackbot.NewInstance(token, *f_debug, "U0JPJSUJU")
 	bot.Run()
 
 }
