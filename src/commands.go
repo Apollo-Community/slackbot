@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"html"
 	"io/ioutil"
+	"math/rand"
 	"net/http"
 	"net/url"
 	"strings"
@@ -27,9 +28,7 @@ func init() {
 		&Command{"help", "Show a list of commands.", cmd_help},
 		&Command{"status", "Show my current status.", cmd_status},
 		&Command{"say", "Repeat a message in the current channel.", cmd_say},
-		&Command{"duck", "Start a duck hunt.", cmd_duck},
-		&Command{"shoot", "Shoot a duck.", cmd_shoot_duck},
-		&Command{"catch", "Catch a duck.", cmd_catch_duck},
+		&Command{"duck", "Quack.", cmd_duck},
 		&Command{"vote", "start/stop a vote or vote yes/no during a vote.", cmd_vote},
 		&Command{"mute", "Mute my messages to this channel, for a while.", cmd_mute},
 		&Command{"roll", "Throw a dice roll.", cmd_roll},
@@ -63,30 +62,16 @@ func cmd_say(i *Instance, m *Message, args string) error {
 }
 
 func cmd_duck(i *Instance, m *Message, args string) error {
-	i.ModeOn("duck_" + m.Channel)
-	i.ChannelMsg(m.Channel, "Oh look, a random *duck* appeard! Try to `shoot` or `catch` it!")
+	var quotes = []string{
+		"Quack",
+		"Wenk",
+		"O RLY?",
+		"Kraaawk!",
+		"Bwaak",
+		"Chirp",
+	}
+	i.ChannelMsg(m.Channel, quotes[rand.Intn(len(quotes))])
 	return nil
-}
-
-func cmd_shoot_duck(i *Instance, m *Message, args string) error {
-	if i.ModeStatus("duck_" + m.Channel) {
-		i.ModeOff("duck_" + m.Channel)
-		i.AddScore(1, "duck", m.User)
-		tmp := fmt.Sprintf("Pew pew! *%s* has shot the duck!\n*%s* has now shot %d ducks.", i.Users[m.User].Name, i.Users[m.User].Name, i.GetScore("duck", m.User))
-		i.ChannelMsg(m.Channel, tmp)
-		return nil
-	}
-	return fmt.Errorf("What are you shooting at, cowboy?")
-}
-
-func cmd_catch_duck(i *Instance, m *Message, args string) error {
-	if i.ModeStatus("duck_" + m.Channel) {
-		i.ModeOff("duck_" + m.Channel)
-		tmp := fmt.Sprintf("Yoink! *%s* has caught the duck but let it go after a while...", i.Users[m.User].Name)
-		i.ChannelMsg(m.Channel, tmp)
-		return nil
-	}
-	return fmt.Errorf("Nuh uh, can't touch me.")
 }
 
 func cmd_vote(i *Instance, m *Message, args string) error {

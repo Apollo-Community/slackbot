@@ -22,7 +22,6 @@ type Instance struct {
 	slack        *slack.Client
 	rtm          *slack.RTM
 	running      bool
-	modes        map[string]bool
 	scores       map[string]map[string]int
 	polls        map[string]int
 	mutes        map[string]time.Time
@@ -43,7 +42,6 @@ func NewInstance(token string, debug bool, botid string) *Instance {
 		BotId:    botid,
 		slack:    s,
 		running:  true,
-		modes:    make(map[string]bool),
 		scores:   make(map[string]map[string]int),
 		polls:    make(map[string]int),
 		mutes:    make(map[string]time.Time),
@@ -119,19 +117,6 @@ func (i *Instance) UserMsg(user, msg string) error {
 	}
 	i.ChannelMsg(cid, msg)
 	return nil
-}
-
-func (i *Instance) ModeOn(m string) {
-	i.modes[m] = true
-}
-
-func (i *Instance) ModeOff(m string) {
-	delete(i.modes, m)
-}
-
-func (i *Instance) ModeStatus(m string) bool {
-	_, ok := i.modes[m]
-	return ok
 }
 
 func (i *Instance) AddScore(amount int, score_type, user string) {
