@@ -190,25 +190,24 @@ func (i *Instance) HandleMsg(msg *slack.MessageEvent) {
 func (i *Instance) parse_msg(m *Message) {
 	e := i.parse_cmd(m)
 	if e != nil {
-		i.ChannelMsg(m.Channel, fmt.Sprintf("Error: %s", e))
+		i.UserMsg(m.User, e.Error())
 	}
 }
 
 func (i *Instance) parse_cmd(m *Message) error {
-	parts := strings.SplitN(m.Message, " ", 2)
-	cmd := strings.TrimSpace(parts[0])
-	var args string
-	if len(parts) == 2 {
-		args = strings.TrimSpace(parts[1])
+	tokens := strings.Fields(m.Message)
+	if len(tokens) < 1 {
+		return nil
 	}
+	cmd := strings.ToLower(tokens[0])
 
 	for _, c := range COMMANDS {
 		if cmd == c.Name {
-			return c.Func(i, m, args)
+			return c.Func(i, m, tokens[1:])
 		}
 	}
 
 	// TODO: for now log the unknown command on STDOUT
 	log.Printf("%v: %v\n", i.Users[m.User].Name, m.Message)
-	return fmt.Errorf("Sorry I don't know how to do that yet, but I'll try to learn it.")
+	return fmt.Errorf("What?")
 }
