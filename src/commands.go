@@ -25,22 +25,21 @@ var COMMANDS []*Command
 
 func init() {
 	COMMANDS = []*Command{
-		&Command{"help", "Show a list of commands.", cmd_help},
-		&Command{"status", "Show my current status.", cmd_status},
-		&Command{"duck", "Quack.", cmd_duck},
-		&Command{"vote", "start/stop a vote or vote yes/no during a vote.", cmd_vote},
-		&Command{"mute", "Mute my messages to this channel, for a while.", cmd_mute},
-		&Command{"roll", "Throw a dice roll.", cmd_roll},
-		&Command{"wiki", "Quote a page from our SS13 wiki.", cmd_wiki},
-		&Command{"pun", "Tell a random pun.", cmd_pun},
-		&Command{"catfact", "Tell a random cat fact.", cmd_catfact},
-		&Command{"goon", "Tell a random quote from Goon's source code.", cmd_goon},
 		&Command{"apollo", "Tell a random quote from Apollo's source code.", cmd_apollo},
+		&Command{"catfact", "Tell a random cat fact.", cmd_catfact},
+		&Command{"duck", "Quack.", cmd_duck},
+		&Command{"goon", "Tell a random quote from Goon's source code.", cmd_goon},
+		&Command{"help", "Show a list of commands.", cmd_help},
+		&Command{"mute", "Mute my messages to this channel, for a while.", cmd_mute},
+		&Command{"pun", "Tell a random pun.", cmd_pun},
+		&Command{"roll", "Throw a dice roll.", cmd_roll},
+		&Command{"status", "Show my current status.", cmd_status},
+		&Command{"vote", "start/stop a vote or vote yes/no during a vote.", cmd_vote},
+		&Command{"wiki", "Quote a page from our SS13 wiki.", cmd_wiki},
 	}
 }
 
 func cmd_help(i *Instance, m *Message, args []string) error {
-	// TODO: sort the list
 	tmp := "Available commands:\n"
 	for _, c := range COMMANDS {
 		tmp += fmt.Sprintf("- `%s\t%s`\n", c.Name, c.Desc)
