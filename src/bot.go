@@ -202,19 +202,32 @@ func (i *Instance) parse_cmd(m *Message) error {
 	}
 	cmd := strings.ToLower(tokens[0])
 
-	var bestscore int
+	var bestscore float64
 	var bestcmd *Command
 	for _, c := range COMMANDS {
-		score := levenshtein.Distance(cmd, c.Name)
-		if bestcmd == nil || bestscore > score {
+		score := calcScore(cmd, c.Name)
+		if bestcmd == nil || score > bestscore {
 			bestscore = score
 			bestcmd = c
 		}
 	}
-	if bestscore < 3 {
+	if bestscore >= 0.5 { // 50% match is good enough!
 		return bestcmd.Func(i, m, tokens[1:])
 	}
 
 	log.Printf("%v: %v\n", i.Users[m.User].Name, m.Message)
 	return fmt.Errorf("Did you mean `%s`?", bestcmd.Name)
+}
+
+func calcScore(a, b string) float64 {
+	score := levenshtein.Distance(a, b)
+	lena := len(a)
+	lenb := len(b)
+	var bigger float64
+	if lena > lenb {
+		bigger = float64(lena)
+	} else {
+		bigger = float64(lenb)
+	}
+	return (bigger - float64(score)) / bigger
 }
