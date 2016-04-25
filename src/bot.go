@@ -8,6 +8,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/arbovm/levenshtein"
 	"github.com/nlopes/slack"
 )
 
@@ -201,13 +202,19 @@ func (i *Instance) parse_cmd(m *Message) error {
 	}
 	cmd := strings.ToLower(tokens[0])
 
+	var bestscore int
+	var bestcmd *Command
 	for _, c := range COMMANDS {
-		if cmd == c.Name {
-			return c.Func(i, m, tokens[1:])
+		score := levenshtein.Distance(cmd, c.Name)
+		if bestcmd == nil || bestscore > score {
+			bestscore = score
+			bestcmd = c
 		}
 	}
+	if bestscore < 3 {
+		return bestcmd.Func(i, m, tokens[1:])
+	}
 
-	// TODO: for now log the unknown command on STDOUT
 	log.Printf("%v: %v\n", i.Users[m.User].Name, m.Message)
-	return fmt.Errorf("What?")
+	return fmt.Errorf("Did you mean `%s`?", bestcmd.Name)
 }
