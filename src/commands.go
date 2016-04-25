@@ -65,6 +65,10 @@ func cmd_duck(i *Instance, m *Message, args []string) error {
 }
 
 func cmd_vote(i *Instance, m *Message, args []string) error {
+	if len(args) < 1 {
+		return fmt.Errorf("Missing argument.")
+	}
+
 	if args[0] == "start" {
 		i.StartVote(m.Channel)
 		i.ChannelMsg(m.Channel, fmt.Sprintf("@%s has started a new vote! Tell me if you would like to `vote yes` or `vote no` on it.", i.Users[m.User].Name))
@@ -88,6 +92,10 @@ func cmd_vote(i *Instance, m *Message, args []string) error {
 }
 
 func cmd_mute(i *Instance, m *Message, args []string) error {
+	if len(args) < 1 {
+		return fmt.Errorf("Missing argument.")
+	}
+
 	dur, e := time.ParseDuration(args[0])
 	if e != nil {
 		return fmt.Errorf("Couldn't parse a duration.")
@@ -133,6 +141,10 @@ func cmd_status(i *Instance, m *Message, args []string) error {
 }
 
 func cmd_roll(i *Instance, m *Message, args []string) error {
+	if len(args) < 1 {
+		return fmt.Errorf("Missing argument.")
+	}
+
 	ret, res, e := dice.Roll(args[0])
 	if e != nil {
 		return fmt.Errorf("Bad dice format.")
@@ -142,6 +154,10 @@ func cmd_roll(i *Instance, m *Message, args []string) error {
 }
 
 func cmd_wiki(i *Instance, m *Message, args []string) error {
+	if len(args) < 1 {
+		return fmt.Errorf("Missing argument.")
+	}
+
 	u := WIKI_URL + url.QueryEscape(args[0])
 	doc, e := goquery.NewDocument(u)
 	if e != nil {
