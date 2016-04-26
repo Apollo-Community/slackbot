@@ -1,5 +1,13 @@
 package cleverbot
 
+// NOTE:
+// This file is based on https://github.com/jonas747/cleverbot.
+// That project had a major bug preventing the bot from responding to you and
+// it doesn't have a license yet (20160426) so I've decided to just let this
+// version sit in here for now.
+//
+// TODO: once author decide to update, this package should be deleted.
+
 import (
 	"bytes"
 	"crypto/md5"
