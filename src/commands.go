@@ -27,6 +27,7 @@ func init() {
 	COMMANDS = []*Command{
 		&Command{"apollo", "Tell a random quote from Apollo's source code.", cmd_apollo},
 		&Command{"catfact", "Tell a random cat fact.", cmd_catfact},
+		&Command{"channels", "Show a list of known channels.", cmd_channels},
 		&Command{"duck", "Quack.", cmd_duck},
 		&Command{"goon", "Tell a random quote from Goon's source code.", cmd_goon},
 		&Command{"help", "Show a list of commands.", cmd_help},
@@ -34,6 +35,7 @@ func init() {
 		&Command{"pun", "Tell a random pun.", cmd_pun},
 		&Command{"roll", "Throw a dice roll.", cmd_roll},
 		&Command{"status", "Show my current status.", cmd_status},
+		&Command{"users", "Show a list of known users.", cmd_users},
 		&Command{"vote", "start/stop a vote or vote yes/no during a vote.", cmd_vote},
 		&Command{"wiki", "Quote a page from our SS13 wiki.", cmd_wiki},
 	}
@@ -235,5 +237,25 @@ func cmd_apollo(i *Instance, m *Message, args []string) error {
 	q := i.random_apollo_quote()
 	msg := fmt.Sprintf(">>>%v\n`%v`", q.Quote, q.File)
 	i.ChannelMsg(m.Channel, msg)
+	return nil
+}
+
+func cmd_channels(i *Instance, m *Message, args []string) error {
+	tmp := fmt.Sprintf("Known channels (%d):\n", len(i.Channels))
+
+	for id, c := range i.Channels {
+		tmp += fmt.Sprintf("`#%s %s - %s`\n", id, c.Name, c.Topic.Value)
+	}
+	i.UserMsg(m.User, tmp)
+	return nil
+}
+
+func cmd_users(i *Instance, m *Message, args []string) error {
+	tmp := fmt.Sprintf("Known users (%d):\n", len(i.Users))
+
+	for id, u := range i.Users {
+		tmp += fmt.Sprintf("`#%s %s - %s`\n", id, u.Name, u.Presence)
+	}
+	i.UserMsg(m.User, tmp)
 	return nil
 }
