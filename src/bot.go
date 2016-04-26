@@ -8,6 +8,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/Apollo-Community/slackbot/src/cleverbot"
+
 	"github.com/arbovm/levenshtein"
 	"github.com/nlopes/slack"
 )
@@ -29,6 +31,8 @@ type Instance struct {
 	forum_topics []*ForumTopic
 	goon         []*Quote
 	apollo       []*Quote
+	talking      bool
+	cleverbot    *cleverbot.Session
 }
 
 func NewInstance(token string, debug bool, botid string) *Instance {
@@ -46,6 +50,7 @@ func NewInstance(token string, debug bool, botid string) *Instance {
 		scores:   make(map[string]map[string]int),
 		polls:    make(map[string]int),
 		mutes:    make(map[string]time.Time),
+		talking:  false,
 	}
 
 	var e error
@@ -56,6 +61,11 @@ func NewInstance(token string, debug bool, botid string) *Instance {
 	i.apollo, e = load_quotes(APOLLO_QUOTES_FILE)
 	if e != nil {
 		fmt.Println("Warning: couldn't load apollo quotes:", e)
+	}
+
+	i.cleverbot, e = cleverbot.New()
+	if e != nil {
+		fmt.Println("Warning: couldn't initialize the cleverbot:", e)
 	}
 
 	// avoid using the same seed all the time (it defaults to 1)
@@ -213,6 +223,16 @@ func (i *Instance) parse_cmd(m *Message) error {
 	}
 	if bestscore >= 0.5 { // 50% match is good enough!
 		return bestcmd.Func(i, m, tokens[1:])
+	}
+
+	if m.Channel == TALK_CHANNEL && i.talking {
+		resp, e := i.cleverbot.Ask(m.Message)
+		if e != nil {
+			fmt.Println("cleverbot error:", e)
+			return nil
+		}
+		i.ChannelMsg(TALK_CHANNEL, resp)
+		return nil
 	}
 
 	log.Printf("%v: %v\n", i.Users[m.User].Name, m.Message)
