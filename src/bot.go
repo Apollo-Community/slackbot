@@ -221,7 +221,7 @@ func (i *Instance) parse_cmd(m *Message) error {
 			bestcmd = c
 		}
 	}
-	if bestscore >= 0.5 { // 50% match is good enough!
+	if bestscore >= 0.75 { // 50% match is good enough!
 		return bestcmd.Func(i, m, tokens[1:])
 	}
 
