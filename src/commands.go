@@ -31,9 +31,11 @@ func init() {
 		&Command{"duck", "Quack.", cmd_duck},
 		&Command{"goon", "Tell a random quote from Goon's source code.", cmd_goon},
 		&Command{"help", "Show a list of commands.", cmd_help},
+		&Command{"hi", "Start a conversation.", cmd_start_talking},
 		&Command{"mute", "Mute my messages to this channel, for a while.", cmd_mute},
 		&Command{"pun", "Tell a random pun.", cmd_pun},
 		&Command{"roll", "Throw a dice roll.", cmd_roll},
+		&Command{"shutup", "Ooor be silent.", cmd_stop_talking},
 		&Command{"status", "Show my current status.", cmd_status},
 		&Command{"users", "Show a list of known users.", cmd_users},
 		&Command{"vote", "start/stop a vote or vote yes/no during a vote.", cmd_vote},
@@ -257,5 +259,33 @@ func cmd_users(i *Instance, m *Message, args []string) error {
 		tmp += fmt.Sprintf("`#%s %s - %s`\n", id, u.Name, u.Presence)
 	}
 	i.UserMsg(m.User, tmp)
+	return nil
+}
+
+func cmd_start_talking(i *Instance, m *Message, args []string) error {
+	if m.Channel != TALK_CHANNEL {
+		return fmt.Errorf("Nuhuh, to shy to talk there.")
+	}
+
+	if i.talking {
+		i.ChannelMsg(TALK_CHANNEL, "I'm already talking! Stop bothering me!")
+	} else {
+		i.ChannelMsg(TALK_CHANNEL, "Helloooo..")
+	}
+	i.talking = true
+	return nil
+}
+
+func cmd_stop_talking(i *Instance, m *Message, args []string) error {
+	if m.Channel != TALK_CHANNEL {
+		return nil
+	}
+
+	if i.talking {
+		i.ChannelMsg(TALK_CHANNEL, "kthx bye!")
+	} else {
+		i.ChannelMsg(TALK_CHANNEL, "Haven't said a word, Cap'.")
+	}
+	i.talking = false
 	return nil
 }
