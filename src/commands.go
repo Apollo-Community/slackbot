@@ -26,6 +26,7 @@ var COMMANDS []*Command
 func init() {
 	COMMANDS = []*Command{
 		&Command{"apollo", "Tell a random quote from Apollo's source code.", cmd_apollo},
+		&Command{"arrest", "Arrest someone.", cmd_arrest},
 		&Command{"catfact", "Tell a random cat fact.", cmd_catfact},
 		&Command{"channels", "Show a list of known channels.", cmd_channels},
 		&Command{"duck", "Quack.", cmd_duck},
@@ -287,5 +288,16 @@ func cmd_stop_talking(i *Instance, m *Message, args []string) error {
 		i.ChannelMsg(TALK_CHANNEL, "Haven't said a word, Cap'.")
 	}
 	i.talking = false
+	return nil
+}
+
+func cmd_arrest(i *Instance, m *Message, args []string) error {
+	tmp := "arrest " + strings.Join(args, " ")
+	resp, e := i.cleverbot.Ask(tmp)
+	if e != nil {
+		fmt.Println("cleverbot error:", e)
+		resp = "But I don't want to!"
+	}
+	i.ChannelMsg(m.Channel, resp)
 	return nil
 }
